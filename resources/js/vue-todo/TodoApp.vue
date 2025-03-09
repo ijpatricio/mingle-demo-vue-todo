@@ -149,7 +149,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Event Log Panel -->
     <div class="max-w-3xl mx-auto mt-8 bg-white rounded-xl shadow-xl overflow-hidden">
       <div class="p-6">
@@ -159,8 +159,8 @@
             No events logged yet. Try interacting with the Todo list.
           </div>
           <div v-else class="space-y-2">
-            <div 
-              v-for="(event, index) in events" 
+            <div
+              v-for="(event, index) in events"
               :key="index"
               class="text-sm py-1 border-b border-gray-200 last:border-b-0"
             >
@@ -198,15 +198,17 @@ onMounted(() => {
 
   // Set up event listeners
   props.wire.on('todoAdded', (todo) => {
-    logEvent('Server Event', `Todo added: ${todo.title}`);
+    logEvent('Server Event', `Todo added: ${todo[0].title}`);
   });
 
-  props.wire.on('todoUpdated', (id, completed) => {
-    logEvent('Server Event', `Todo updated: ID ${id}, completed: ${completed}`);
+  props.wire.on('todoUpdated', (data) => {
+    // Properly handle the data object sent from Livewire
+    logEvent('Server Event', `Todo updated: ID ${data[0].id}, completed: ${data[0].completed}`);
   });
 
-  props.wire.on('todoDeleted', (id) => {
-    logEvent('Server Event', `Todo deleted: ID ${id}`);
+  props.wire.on('todoDeleted', (data) => {
+    // Properly handle the data object sent from Livewire
+    logEvent('Server Event', `Todo deleted: ID ${data[0].id}`);
   });
 
   props.wire.on('completedCleared', () => {
@@ -235,9 +237,9 @@ const hasCompleted = computed(() => {
 // Methods
 function addTodo() {
   if (!newTodo.value.trim()) return;
-  
+
   logEvent('Client Action', `Adding todo: ${newTodo.value}`);
-  
+
   // Call the server method
   props.wire.addTodo(newTodo.value)
     .then(newTodoFromServer => {
@@ -252,9 +254,9 @@ function addTodo() {
 
 function toggleTodo(todo) {
   const updatedStatus = !todo.completed;
-  
+
   logEvent('Client Action', `Toggling todo: ${todo.title} to ${updatedStatus ? 'completed' : 'active'}`);
-  
+
   // Call the server method
   props.wire.updateTodo(todo.id, updatedStatus)
     .then(response => {
@@ -271,7 +273,7 @@ function toggleTodo(todo) {
 
 function removeTodo(todo) {
   logEvent('Client Action', `Removing todo: ${todo.title}`);
-  
+
   // Call the server method
   props.wire.deleteTodo(todo.id)
     .then(response => {
@@ -285,7 +287,7 @@ function removeTodo(todo) {
 
 function clearCompleted() {
   logEvent('Client Action', 'Clearing all completed todos');
-  
+
   // Call the server method
   props.wire.clearCompleted()
     .then(response => {
@@ -300,13 +302,13 @@ function clearCompleted() {
 function logEvent(type, message) {
   const now = new Date();
   const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  
+
   events.value.unshift({
     time,
     type,
     message
   });
-  
+
   // Keep only the last 50 events
   if (events.value.length > 50) {
     events.value = events.value.slice(0, 50);

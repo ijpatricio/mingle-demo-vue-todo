@@ -56,18 +56,24 @@ class TodoApp extends Component implements HasMingles
     public function updateTodo($id, $completed)
     {
         // In a real app, this would update the database
-        $this->dispatch('todoUpdated', id: $id, completed: $completed);
-        
-        return [
+        $data = [
             'id' => $id,
             'completed' => $completed
         ];
+        
+        // Send a single data object to the client
+        $this->dispatch('todoUpdated', $data);
+        
+        return $data;
     }
 
     public function deleteTodo($id)
     {
         // In a real app, this would delete from the database
-        $this->dispatch('todoDeleted', id: $id);
+        $data = ['id' => $id];
+        
+        // Send a single data object to the client
+        $this->dispatch('todoDeleted', $data);
         
         return true;
     }
