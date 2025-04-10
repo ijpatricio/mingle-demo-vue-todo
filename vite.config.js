@@ -22,7 +22,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/vue/index.js',
+                'resources/js/vue-todo/index.js',
 
             ],
             refresh: true,

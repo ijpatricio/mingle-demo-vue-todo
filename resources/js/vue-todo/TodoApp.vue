@@ -197,9 +197,9 @@ onMounted(() => {
   }
 
   // Set up event listeners
-  props.wire.on('todoAdded', (todo) => {
-    logEvent('Server Event', `Todo added: ${todo[0].title}`);
-  });
+    props.wire.on('todoAdded', ({todo}) => {
+        logEvent('Server Event', `Todo added: ${todo.title}`);
+    });
 
   props.wire.on('todoUpdated', (data) => {
     // Properly handle the data object sent from Livewire
